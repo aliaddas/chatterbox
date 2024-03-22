@@ -10,3 +10,5 @@ function ChatBubbleComponent() {
     </div>
   );
 }
+
+export default ChatBubbleComponent;

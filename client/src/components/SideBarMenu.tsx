@@ -1,7 +1,11 @@
 function SideBarMenu() {
   return (
-    <div className="bg-primary p-4 w-80">
-      <h1>CHATTERBOX</h1>
+    <div className="flex flex-col flex-grow bg-primary w-80">
+      <div className="w-full h-20 bg-slate-200"></div>
+      <div className="w-full flex-grow bg-slate-400">
+        <h1 className="text-center">CHATS</h1>
+      </div>
+      <div className="w-full h-40 bg-slate-200"></div>
     </div>
   );
 }
