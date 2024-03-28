@@ -1,14 +1,18 @@
-function ChatBubbleComponent() {
+// ChatBubbleComponent.tsx
+import React from "react";
+
+interface ChatBubbleProps {
+  message: string;
+  date: string;
+}
+
+const ChatBubbleComponent: React.FC<ChatBubbleProps> = ({message, date}) => {
   return (
     <div className="bg-slate-300 w-6/12 h-min m-5 p-3 rounded-md">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus,
-        molestiae quam? Necessitatibus sapiente eos quos reprehenderit dolorum
-        similique vitae possimus aliquid natus? Magnam consectetur repellat qui
-        mollitia aut, ex delectus?
-      </p>
+      <p>{message}</p>
+      <p>{date}</p>
     </div>
   );
-}
+};
 
 export default ChatBubbleComponent;

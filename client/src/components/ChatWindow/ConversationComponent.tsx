@@ -5,16 +5,13 @@ function ConversationComponent() {
     <div className="flex flex-grow bg-secondary">
       <div className="w-20"></div>
       <div className="flex-grow h-full">
-        <ChatBubbleComponent />
-        <ChatBubbleComponent />
-        <div className="bg-slate-300 w-7/12 h-min m-0 ml-auto mr-5 p-3 rounded-md">
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        <ChatBubbleComponent
+          message="Lorem ipsum dolor sit amet consectetur adipisicing elit.
             Necessitatibus, molestiae quam? Necessitatibus sapiente eos quos
             reprehenderit dolorum similique vitae possimus aliquid natus? Magnam
-            consectetur repellat qui mollitia aut, ex delectus?
-          </p>
-        </div>
+            consectetur repellat qui mollitia aut, ex delectus?"
+          date="March 28   1:48PM"
+        />
       </div>
       <div className="w-20"></div>
     </div>
