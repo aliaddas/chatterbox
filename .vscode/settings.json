@@ -1,4 +1,9 @@
 {
   "editor.codeLensFontFamily": "Geist Mono",
-  "editor.fontFamily": "Geist Mono"
+  "editor.fontFamily": "Geist Mono",
+  "editor.formatOnSave": true,
+  "deno.enable": true,
+  "deno.enablePaths": [
+    "server"
+  ]
 }

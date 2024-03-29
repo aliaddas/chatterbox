@@ -1,3 +1,4 @@
-// This is the entrypoint of the backend,
+import {Router} from "https://deno.land/x/oak@14.2.0/mod.ts";
+import startHTTP from "./http/http.ts";
 
-// TODO: Initialise the services and the http server at selected port
+startHTTP(8000);
