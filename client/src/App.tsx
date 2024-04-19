@@ -1,15 +1,19 @@
-import React from "react";
-import logo from "./logo.svg";
+import React, {useState} from "react";
 import "./App.css";
 import ChatWindow from "./components/ChatWindow";
-import SideBarMenu from "./components/SideBarMenu";
+import SideBarMenu from "./components/ChatWindow/SideBarMenu";
+import ProfileContext from "./context/userProfileContext";
 
 function App() {
+  const [username, setUsername] = useState("");
+
   return (
-    <div className="flex h-screen w-screen">
-      <SideBarMenu />
-      <ChatWindow />
-    </div>
+    <ProfileContext.Provider value={{username}}>
+      <div className="flex h-screen w-screen">
+        <SideBarMenu />
+        <ChatWindow />
+      </div>
+    </ProfileContext.Provider>
   );
 }
 

@@ -50,22 +50,22 @@ export {messageRouter};
 async function handleAddMessage(
   context: RouterContext<any, Record<string, any>>
 ) {
-  const myBody = await context.request.body
+  const messageJSON = await context.request.body
     .json()
     .catch(() => new Error("Invalid JSON"));
 
-  if (myBody instanceof Error) {
-    context.response.body = myBody.message;
+  if (messageJSON instanceof Error) {
+    context.response.body = messageJSON.message;
     return;
   }
 
-  const parsedBody = MessageValidator.safeParse(myBody);
+  const parsedMessageJSON = MessageValidator.safeParse(messageJSON);
 
-  if (!parsedBody.success) {
-    context.response.body = parsedBody.error.message;
+  if (!parsedMessageJSON.success) {
+    context.response.body = parsedMessageJSON.error.message;
     return;
   }
 
-  const message = await chatService.addMessage(myBody);
+  const message = await chatService.addMessage(messageJSON);
   context.response.body = {message};
 }

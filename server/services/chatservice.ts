@@ -33,11 +33,7 @@ export const chatService: IChatService = {
     const sortedList = messageList.sort(
       options.order === "asc" ? orderByAsc : orderByDesc
     );
-
-    console.log("Skip: " + options.skip);
-    console.log("Take: " + options.take);
     return sortedList.slice(options.skip, options.take);
-    //return messageList;
   },
 };
 
