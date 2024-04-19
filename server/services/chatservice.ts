@@ -30,11 +30,14 @@ export const chatService: IChatService = {
   },
 
   async getMessages(options) {
-    const sortedList = [...messageList].sort(
+    const sortedList = messageList.sort(
       options.order === "asc" ? orderByAsc : orderByDesc
     );
 
-    return sortedList.slice(options.take, options.skip);
+    console.log("Skip: " + options.skip);
+    console.log("Take: " + options.take);
+    return sortedList.slice(options.skip, options.take);
+    //return messageList;
   },
 };
 

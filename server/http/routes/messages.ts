@@ -4,6 +4,11 @@ import {z} from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const messageRouter = new Router();
 
+const QueryValidator = z.object({
+  take: z.coerce.number().optional(),
+  skip: z.coerce.number().optional(),
+});
+
 const MessageValidator = z.object({
   username: z.string(),
   message: z.string().min(1, {message: "Required"}),
@@ -17,9 +22,27 @@ messageRouter
 async function handleGetMessage(
   context: RouterContext<any, Record<string, any>>
 ) {
-  const message = await chatService.getMessages({take: 1, skip: 1});
+  const {request, response} = context;
 
-  context.response.body = message;
+  const parsing = await QueryValidator.safeParseAsync({
+    take: request.url.searchParams.get("take"),
+    skip: request.url.searchParams.get("skip"),
+  });
+
+  if (!parsing.success) {
+    response.status = 422;
+    response.body = parsing.error.message;
+    return;
+  }
+
+  const {take, skip} = parsing.data;
+
+  const messages = await chatService.getMessages({
+    take: Number(take),
+    skip: Number(skip),
+  });
+
+  response.body = messages;
 }
 export {messageRouter};
 
