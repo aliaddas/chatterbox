@@ -1,11 +1,11 @@
 import {createContext} from "react";
 
-type HappyContext = {
+type HappyContextType = {
   isHappy: boolean;
 
   changeMood: (newMood: boolean) => void;
 };
 
-const context = createContext<HappyContext>({} as any);
+const HappyContext = createContext<HappyContextType>({} as any);
 
-export default context;
+export default HappyContext;

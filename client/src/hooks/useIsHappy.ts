@@ -7,7 +7,7 @@ export default function useIsHappy() {
 
   return {
     isHappy: ctx.isHappy,
-    toggleHappinness: () => {
+    toggleHappiness: () => {
       ctx.changeMood(!ctx.isHappy);
     },
   };

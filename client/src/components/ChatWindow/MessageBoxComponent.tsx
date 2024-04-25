@@ -1,18 +1,23 @@
-import {useEffect, useState} from "react";
+import { useState } from "react";
+import useProfileContext from '../../hooks/useProfileContext';
 
 function MessageBoxComponent() {
   const [input, setInput] = useState("");
 
+  const { username } = useProfileContext();
+
   const eventToString = (evnt: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = evnt.target.value;
     setInput(newValue);
+
   };
 
   const submitMessage = (evnt: React.FormEvent) => {
     evnt.preventDefault();
+    setInput("");
 
     const message = {
-      username: "Ali",
+      username: username,
       message: input,
     };
     fetch("http://localhost:8000/addMessage", {
