@@ -6,6 +6,7 @@ import SideBarMenu from "./components/ChatWindow/SideBarMenu";
 import ProfileContext from "./context/ProfileContext";
 import LoginWindow from "./components/AuthWindow/LoginWindow";
 
+
 function App() {
   const [username, setUsername] = useState(""); // Manage the state here
 

@@ -1,49 +1,53 @@
-import { useState } from "react";
-import useProfileContext from '../../hooks/useProfileContext';
+import React, { useState } from "react";
 
-function MessageBoxComponent() {
+
+interface Props {
+  socket: WebSocket | null;
+}
+
+
+function MessageBoxComponent({ socket }: Props) {
   const [input, setInput] = useState("");
 
-  const { username } = useProfileContext();
+  //Check if websocket exists
+  if (!input.trim() || !socket) return;
 
-  const eventToString = (evnt: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = evnt.target.value;
-    setInput(newValue);
-
+  const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+    setInput(event.target.value);
   };
 
-  const submitMessage = (evnt: React.FormEvent) => {
-    evnt.preventDefault();
-    setInput("");
+  const handleSubmit = (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    if (!input.trim()) return;
 
-    const message = {
-      username: username,
-      message: input,
-    };
-    fetch("http://localhost:8000/addMessage", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(message),
-    })
-      .then((response) => response.json())
-      .catch((error) => {
-        console.error("Error adding dummy message:", error);
-      });
+    // Send message on websocket
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(
+        JSON.stringify({
+          event: "send-message",
+          message: input,
+        })
+      );
+
+    setInput("")
+  } else {
+      console.error("WebSocket connection is not open");
+    }
   };
 
   return (
-    <div className=" bg-secondary ">
-      <form className="shadow-lg flex justify-between" onSubmit={submitMessage}>
+    <div className="bg-secondary">
+      <form className="shadow-lg flex justify-between" onSubmit={handleSubmit}>
         <input
           type="text"
-          onChange={eventToString}
           value={input}
-          placeholder="Type your message /"
+          onChange={handleChange}
+          placeholder="Type your message"
           className="flex-grow m-3 pt-0 pl-2 pr-2 bg-slate-500 rounded-sm text-slate-300 shadow-slate-200 shadow-sm focus:outline-none"
         />
-        <button className="bg-primary p-4">SEND</button>
+        <button type="submit" className="bg-primary p-4">
+          SEND
+        </button>
       </form>
     </div>
   );
