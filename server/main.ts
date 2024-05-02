@@ -1,6 +1,5 @@
 import startHTTP from "./http/http.ts";
-import { startSocketServer } from "./websocket/websocket.ts";
+import startWebSocket from "./websockets/websocket.ts";
 
-const PORT = 8080;
-await startSocketServer(PORT);
-startHTTP(8000);
+startHTTP(7000);
+startWebSocket(8000);

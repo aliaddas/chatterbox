@@ -1,53 +1,47 @@
-import React, { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import useProfileContext from '../../hooks/useProfileContext';
+import WebSocketContext from '../../context/WebSocketContext';
+
+function MessageBoxComponent() {
+  const [typedMessage, typingEvent] = useState("");
+  const { username } = useProfileContext();
+  const { webSocket, send } = useContext(WebSocketContext);
+
+  useEffect(() => {
+    if (!webSocket) return;
+  }, [webSocket]);
 
 
-interface Props {
-  socket: WebSocket | null;
-}
+  const submitMessage = (evnt: React.FormEvent) => {
+    evnt.preventDefault();
 
+    // Create the message object
+    const message = {
+      username: username,
+      message: typedMessage,
+    };
 
-function MessageBoxComponent({ socket }: Props) {
-  const [input, setInput] = useState("");
-
-  //Check if websocket exists
-  if (!input.trim() || !socket) return;
-
-  const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-    setInput(event.target.value);
-  };
-
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
-    if (!input.trim()) return;
-
-    // Send message on websocket
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send(
-        JSON.stringify({
-          event: "send-message",
-          message: input,
-        })
-      );
-
-    setInput("")
-  } else {
-      console.error("WebSocket connection is not open");
+    if (WebSocket.OPEN) {
+      //Send the message with instructions
+      const instructions = { action: 'addMessage', message: message };
+      send(JSON.stringify(instructions));
+    } else {
+      console.error("Failed to send message ");
     }
+    typingEvent("");
   };
 
   return (
-    <div className="bg-secondary">
-      <form className="shadow-lg flex justify-between" onSubmit={handleSubmit}>
+    <div className=" bg-secondary ">
+      <form className="shadow-lg flex justify-between" onSubmit={submitMessage}>
         <input
           type="text"
-          value={input}
-          onChange={handleChange}
-          placeholder="Type your message"
+          onChange={(event) => typingEvent(event.target.value)}
+          value={typedMessage}
+          placeholder="Type your message /"
           className="flex-grow m-3 pt-0 pl-2 pr-2 bg-slate-500 rounded-sm text-slate-300 shadow-slate-200 shadow-sm focus:outline-none"
         />
-        <button type="submit" className="bg-primary p-4">
-          SEND
-        </button>
+        <button className="bg-primary p-4">SEND</button>
       </form>
     </div>
   );

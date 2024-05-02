@@ -17,9 +17,9 @@ const MessageValidator = z.object({
 messageRouter
   .post("/addMessage", handleAddMessage)
 
-  .get("/getMessage", handleGetMessage);
+  .get("/getMessages", handleGetMessages);
 
-async function handleGetMessage(
+async function handleGetMessages(
   context: RouterContext<any, Record<string, any>>
 ) {
   const {request, response} = context;
