@@ -17,6 +17,8 @@ export interface IChatService {
 	 */
 	getMessages(options: GetChatsDTO): Promise<Chat[]>
 
+	getById(options: GetChatByIdDTO): Promise<Chat | undefined>
+
 }
 
 /**
@@ -28,7 +30,7 @@ export interface IEventBus {
 	 * Send a new message through the message bus to be
 	 * handled by some third party
 	 */
-	send(newMessage: NewChatMsg): Promise<void>
+	send(newMessage: EvntBusAction): Promise<void>
 
 	/**
 	 * Subscribe to incoming messages to be able to handle them
@@ -36,6 +38,8 @@ export interface IEventBus {
 	subscribe(options: SubscriptionOptions, handler: ChatBusMsgHandler): Promise<Disposable>
 
 }
+
+export type EvntBusAction = NewChatMsg
 
 /**
  * Representation a single message
@@ -71,6 +75,11 @@ export type GetChatsDTO = {
 	 * Number of messages to skip before selecting
 	 */
 	skip: number
+
+}
+
+export type GetChatByIdDTO = {
+	id: string;
 }
 
 /**
@@ -94,4 +103,4 @@ export type NewChatMsg = {
 
 export type SubscriptionOptions = {}
 
-export type ChatBusMsgHandler = (incomingMessage: NewChatMsg) => unknown
+export type ChatBusMsgHandler = (incomingMessage: EvntBusAction) => unknown

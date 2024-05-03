@@ -1,5 +1,43 @@
-import { IEventBus } from "../contract";
+import { ChatBusMsgHandler, IEventBus, SubscriptionOptions, Disposable, EvntBusAction } from "../contract.ts";
 
-export const eventBus: IEventBus = {
-	// ...
+
+class EvntBus implements IEventBus {
+  private subscribedList: Subscriber[] = [];
+
+  send(newMessage: EvntBusAction): Promise<void> {
+    this.subscribedList.forEach(subscriber => {
+      subscriber.handler(newMessage)
+    })
+
+    return Promise.resolve()
+  }
+
+  async subscribe(options: SubscriptionOptions, handler: ChatBusMsgHandler): Promise<Disposable> {
+    const subscriber = {
+      options,
+      handler
+    }
+
+    this.subscribedList.push(subscriber)
+
+    return {
+      dispose: () => {
+        this.subscribedList.splice(
+          this.subscribedList.indexOf(subscriber),
+          1
+        )
+      }
+    }
+  }
+}
+
+export default new EvntBus()
+
+// --
+// Internal
+// --
+
+type Subscriber = {
+  options: SubscriptionOptions,
+  handler: ChatBusMsgHandler
 }

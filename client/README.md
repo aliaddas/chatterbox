@@ -44,3 +44,18 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+# Cool things
+
+Choses cool pour s'entrainer:
+  - Ajouter des message "système"
+    "Ali joined/left the Chat"
+  - Ajouter des reactions sur un chat (👍 | ...)
+
+  -> Les deux peuvent être fait via websockets & post pour ajouter une réaction
+
+  - UseChat hook:
+    chat = useChat()
+    chat.addMessage(...)
+    chat.onNewMessage(...)

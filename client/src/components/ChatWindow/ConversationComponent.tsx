@@ -21,10 +21,12 @@ function ConversationComponent() {
         setMessages(data.messages);
       }
       // Requested message added
-      else if(data.info === "addMessageSuccess") {
-        console.log("Message added successfully");
-        // Request the messages again for UI
-        send(JSON.stringify(instructions));
+      // TODO: Remove this, do not expect message back from add
+      if(data.action === "newChat"){
+        console.log('got a new chat', data)
+        setMessages(
+          currentMessages => ([...currentMessages, { ...data.payload, createdAt: new Date(data.payload.createdAt)}])
+        )
       }
     };
 

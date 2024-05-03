@@ -13,33 +13,32 @@ function App() {
 
 
   useEffect(() => {
-
     // Wait 500ms before creating the WebSocket
     const socketDelay = setTimeout(() => {
-    let instanceWS: React.SetStateAction<WebSocket | null>;
-    instanceWS = new WebSocket('ws://localhost:8000');
+      let instanceWS: React.SetStateAction<WebSocket | null>;
+      instanceWS = new WebSocket('ws://localhost:8000');
 
-    instanceWS.onopen = () => {
-      console.log('WebSocket connection opened (App)');
-    }
+      instanceWS.onopen = () => {
+        console.log('WebSocket connection opened (App)');
+      }
 
-    instanceWS.onclose = () => {
-      console.log('WebSocket connection closed');
-    }
+      instanceWS.onclose = () => {
+        console.log('WebSocket connection closed');
+      }
 
-    instanceWS.onerror = (event) => {
-      console.error('WebSocket error', event);
-    }
+      instanceWS.onerror = (event) => {
+        console.error('WebSocket error', event);
+      }
 
-    setWebSocket(instanceWS);
-  }, 500);
+      setWebSocket(instanceWS);
+    }, 500);
 
-  return () => {
-    clearTimeout(socketDelay);
-    if (webSocket && typeof webSocket !== 'function') {
-      webSocket.close();
-    }
-  };
+    return () => {
+      clearTimeout(socketDelay);
+      if (webSocket && typeof webSocket !== 'function') {
+        webSocket.close();
+      }
+    };
   }, []);
 
   const send = (data: string) => {

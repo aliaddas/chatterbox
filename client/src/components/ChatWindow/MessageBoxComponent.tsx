@@ -22,9 +22,19 @@ function MessageBoxComponent() {
     };
 
     if (WebSocket.OPEN) {
+      // TODO: ADD Message by HTTPPost
       //Send the message with instructions
-      const instructions = { action: 'addMessage', message: message };
-      send(JSON.stringify(instructions));
+      fetch("http://localhost:7000/addMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    })
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error adding dummy message:", error);
+      });
     } else {
       console.error("Failed to send message ");
     }

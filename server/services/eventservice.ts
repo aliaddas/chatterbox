@@ -3,4 +3,7 @@ import {
   NewChatMsg,
   ChatBusMsgHandler,
   IEventBus,
+  SubscriptionOptions,
 } from "../contract.ts";
+
+

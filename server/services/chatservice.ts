@@ -1,9 +1,8 @@
-// TODO: Implement the IChatService here
-
 // TIP: maybe at first, don't worry about database &
 // data persistance, but store everything in a local variable ?
 
 import {Chat, IChatService} from "../contract.ts";
+import EventBus from '../bus/eventbus.ts'
 
 let id = 0;
 const messageList: Chat[] = [
@@ -26,6 +25,13 @@ export const chatService: IChatService = {
 
     messageList.push(newChat);
 
+    EventBus.send({
+      date: new Date(),
+      payload: {
+        chatId: newChat.id
+      }
+    })
+
     return newChat;
   },
 
@@ -35,6 +41,14 @@ export const chatService: IChatService = {
     );
     return sortedList.slice(options.skip, options.take);
   },
+
+  async getById(options){
+    for (let i = 0; i < messageList.length; i++) {
+      const message = messageList[i];
+      if (message.id === options.id)
+      return message;
+    }
+  }
 };
 
 // --
