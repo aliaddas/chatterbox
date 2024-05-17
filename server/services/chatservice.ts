@@ -26,6 +26,7 @@ export const chatService: IChatService = {
     messageList.push(newChat);
 
     EventBus.send({
+      type: 'newChat',
       date: new Date(),
       payload: {
         chatId: newChat.id

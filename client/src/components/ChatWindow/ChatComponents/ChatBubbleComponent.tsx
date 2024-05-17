@@ -14,6 +14,7 @@ const formatDate = (createdAt: Date) => {
 
 function ChatBubbleComponent({message}: Props) {
   const parsedDate = formatDate(message.createdAt);
+
   return (
     <div className="bg-slate-300 w-6/12 h-min m-5 p-3 rounded-md shadow-lg">
       <h2 className="flex justify-between">

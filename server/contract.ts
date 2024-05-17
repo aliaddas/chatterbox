@@ -39,7 +39,7 @@ export interface IEventBus {
 
 }
 
-export type EvntBusAction = NewChatMsg
+export type EvntBusAction = NewChatMsg | UserConnectedMsg
 
 /**
  * Representation a single message
@@ -94,11 +94,21 @@ export interface Disposable {
  * Event message representing a new chat
  */
 export type NewChatMsg = {
+	type: 'newChat',
+
 	payload: {
 		chatId: string
 	}
 
 	date: Date
+}
+
+export type UserConnectedMsg = {
+	type: 'userConnected'
+
+	payload: {
+		username: string
+	}
 }
 
 export type SubscriptionOptions = {}

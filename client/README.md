@@ -59,3 +59,5 @@ Choses cool pour s'entrainer:
     chat = useChat()
     chat.addMessage(...)
     chat.onNewMessage(...)
+
+  - Unique username (two people cannot join w/ same username at same time)

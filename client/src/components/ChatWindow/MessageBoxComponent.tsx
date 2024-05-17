@@ -1,16 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import useProfileContext from '../../hooks/useProfileContext';
-import WebSocketContext from '../../context/WebSocketContext';
 
 function MessageBoxComponent() {
   const [typedMessage, typingEvent] = useState("");
   const { username } = useProfileContext();
-  const { webSocket, send } = useContext(WebSocketContext);
-
-  useEffect(() => {
-    if (!webSocket) return;
-  }, [webSocket]);
-
 
   const submitMessage = (evnt: React.FormEvent) => {
     evnt.preventDefault();
@@ -21,10 +14,9 @@ function MessageBoxComponent() {
       message: typedMessage,
     };
 
-    if (WebSocket.OPEN) {
-      // TODO: ADD Message by HTTPPost
-      //Send the message with instructions
-      fetch("http://localhost:7000/addMessage", {
+    // TODO: ADD Message by HTTPPost
+    //Send the message with instructions
+    fetch("http://localhost:7000/addMessage", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,9 +27,6 @@ function MessageBoxComponent() {
       .catch((error) => {
         console.error("Error adding dummy message:", error);
       });
-    } else {
-      console.error("Failed to send message ");
-    }
     typingEvent("");
   };
 

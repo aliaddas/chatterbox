@@ -1,14 +1,40 @@
 // LoginWindow.tsx
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import useProfileContext from '../../hooks/useProfileContext';
+import WebSocketContext from '../../context/WebSocketContext';
 
 function LoginWindow() {
   const [inputUsername, setInputUsername] = useState("");
   const { submitUsername } = useProfileContext();
+  const { webSocket, setWebSocket } = useContext(WebSocketContext);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     submitUsername(inputUsername);
+    // Wait 500ms before creating the WebSocket
+    const socketDelay = setTimeout(() => {
+      const instanceWS = new WebSocket(`ws://localhost:8000?username=${inputUsername}`);
+
+      instanceWS.onopen = () => {
+        console.log('WebSocket connection opened (LoginWindow)');
+        setWebSocket(instanceWS);
+      }
+
+      instanceWS.onclose = () => {
+        console.log('WebSocket connection closed');
+      }
+
+      instanceWS.onerror = (event) => {
+        console.error('WebSocket error', event);
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(socketDelay);
+      if (webSocket && typeof webSocket !== 'function') {
+        webSocket.close();
+      }
+    };
   };
 
   return (
