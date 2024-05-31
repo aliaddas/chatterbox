@@ -11,21 +11,31 @@ function App() {
   const [username, setUsername] = useState("");
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
 
+  // Check every 5 seconds if the WebSocket is still open
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (webSocket && webSocket.readyState !== WebSocket.OPEN) {
+        setWebSocket(null);
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [webSocket]);
+
   return (
     <WebSocketContext.Provider value={{
       webSocket,
       setWebSocket,
       send(...args) {
         console.log(...args)
-        // webSocket?.send(...args)
       },
       addEventListener: () => {},
       removeEventListener: () => {},
       onOpen: () => {}, onError: () => {}, onClose: (callback: (event: CloseEvent) => void) => {} }}
     >
       <ProfileContext.Provider value={{ username, setUsername }}>
-        <div className="flex h-screen w-screen">
-          {username === "" ? (
+        <div className="flex h-screen w-screen bg-[rgb(12,5,16)]">
+          {username === "" || webSocket === null ? (
             <LoginWindow />
           ) : (
             <>

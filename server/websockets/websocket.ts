@@ -29,40 +29,53 @@ export default function startWebSocket(port: number) {
     const { socket, response } = Deno.upgradeWebSocket(req);
     let disposable: Disposable | null = null
 
-  socket.addEventListener("open", async () => {
-    console.log(`${connectedUser} joined the chat!`);
-
     connectedUsers.push(connectedUser);
-    EventBus.send({
-      type: "userConnected",
-      payload: {
-        username: connectedUser,
-      },
+
+    const sendUserConnected = () => {
+      EventBus.send({
+        type: "userConnected",
+        payload: {
+          username: connectedUser,
+        },
+      });
+    };
+
+    const timeoutID = setTimeout(sendUserConnected, 20);
+
+    socket.addEventListener("open", async () => {
+      console.log(`Connection to ${connectedUser} started`);
+
+      disposable = await EventBus.subscribe(
+        {},
+        async (message) => {
+          console.log({ message })
+          if (message.type === "newChat") {
+            const newChat = await chatService.getById({ id: message.payload.chatId });
+            const instructions = { action: "newChat", payload: newChat };
+            socket.send(JSON.stringify(instructions));
+          }
+
+          if (message.type === "userConnected") {
+            const instructions = { info: "userConnected", payload: message.payload.username };
+            socket.send(JSON.stringify(instructions));
+          }
+
+          if (message.type === "userDisconnected") {
+            const instructions = { info: "userDisconnected", payload: connectedUser };
+            socket.send(JSON.stringify(instructions));
+          }
+        }
+      );
     });
 
-    disposable = await EventBus.subscribe(
-      {},
-      async (message) => {
-        console.log({ message })
-        if (message.type === "newChat") {
-          const newChat = await chatService.getById({ id: message.payload.chatId });
-          const instructions = { action: "newChat", payload: newChat };
-          socket.send(JSON.stringify(instructions));
-        }
+    socket.addEventListener("close", () => {
+      clearTimeout(timeoutID); // clear the timeout when the socket closes
+      connectedUsers.splice(connectedUsers.indexOf(connectedUser), 1);
+      disposable?.dispose()
 
-        if (message.type === "userConnected") {
-          const instructions = { info: "userConnected", payload: message.payload.username };
-          socket.send(JSON.stringify(instructions));
-        }
-      }
-    );
-  });
+      console.log(`Connection to ${connectedUser} closed.`);
+    });
 
-  socket.addEventListener("close", () => {
-    disposable?.dispose()
-    console.log(`${connectedUser} left the chat!`);
-  });
-
-  return response;
+    return response;
   });
 }

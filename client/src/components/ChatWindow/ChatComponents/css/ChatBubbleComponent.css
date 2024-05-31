@@ -1,0 +1,15 @@
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.238); /* Adjust as needed */
+  border: 1px solid rgba(255, 255, 255, 0.25); /* Adjust as needed */
+  backdrop-filter: blur(10px); /* Adjust as needed */
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
+  box-shadow: 0 0px 10px 0 rgba(117, 117, 122, 0.600); /* Adjust as needed */
+}
+
+.glassmorphismheader {
+  background: rgba(255, 255, 255, 0.682); /* Adjust as needed */
+  border: 2px solid rgb(69, 21, 49); /* Adjust as needed */
+  backdrop-filter: blur(10px); /* Adjust as needed */
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
+  box-shadow: 0 0px 10px 0 rgba(101, 101, 152, 0.6); /* Adjust as needed */
+}

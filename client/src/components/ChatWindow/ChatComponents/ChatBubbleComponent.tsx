@@ -1,3 +1,8 @@
+import useProfileContext from '../../../hooks/useProfileContext';
+import "./css/ChatBubbleComponent.css";
+
+
+
 type Props = {
   message: ChatMessage;
 };
@@ -13,19 +18,32 @@ const formatDate = (createdAt: Date) => {
 };
 
 function ChatBubbleComponent({message}: Props) {
+  const { username } = useProfileContext();
   const parsedDate = formatDate(message.createdAt);
 
-  return (
-    <div className="bg-slate-300 w-6/12 h-min m-5 p-3 rounded-md shadow-lg">
-      <h2 className="flex justify-between">
-        <strong>{message.username}</strong>
-      </h2>
-      <p>{message.message}</p>
-      <em className="text-xs">{parsedDate}</em>
-    </div>
-  );
+  if(message.username === username) {
+    return (
+      <div className="glassmorphism min-w-3/5 w-6/12 h-min mt-5 p-3 rounded-md shadow-lg ml-auto">
+        <h2 className="flex justify-between text-gray-300">
+          <strong>{message.username}</strong>
+        </h2>
+        <p className='text-gray-300'>{message.message}</p>
+        <em className="text-xs text-gray-400">{parsedDate}</em>
+      </div>
+    )
+  }
+  else{
+    return (
+      <div className="glassmorphism min-w-3/5 w-6/12 h-min mt-5 p-3 rounded-md shadow-lg">
+        <h2 className="flex justify-between text-gray-300">
+          <strong>{message.username}</strong>
+        </h2>
+        <p className='text-gray-300'>{message.message}</p>
+        <em className="text-xs text-gray-400">{parsedDate}</em>
+      </div>
+    )
+  }
 }
-
 export default ChatBubbleComponent;
 
 type ChatMessage = {

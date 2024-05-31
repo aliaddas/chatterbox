@@ -38,7 +38,7 @@ function LoginWindow() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen justify-center items-center bg-slate-200">
+    <div className="flex flex-col h-screen w-screen justify-center items-center bg-[rgb(12,5,16)]">
       <div className="bg-white p-8 rounded-md shadow-md">
         <form onSubmit={handleSubmit}>
           <input

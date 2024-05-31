@@ -1,14 +1,11 @@
+import { UsersRound } from 'lucide-react';
 import useIsHappy from "../../hooks/useIsHappy";
 
 function HeaderComponent() {
   return (
-    <div className="bg-secondary p-4 border-b-2 flex border-accent">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/681/681494.png"
-        alt=""
-        className="w-10"
-      />
-      <h1>DM CHAT NAME</h1>
+    <div className="flex glassmorphismheader h-[5%] mr-7 ml-7 p-4 mt-5 rounded-lg">
+      <UsersRound size={25} className='mr-3'/>
+      <h1 className='tracking-tight align-middle font-bold'>CHAT ROOM</h1>
     </div>
   );
 }

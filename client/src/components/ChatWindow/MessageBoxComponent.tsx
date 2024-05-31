@@ -1,5 +1,7 @@
 import { useState } from "react";
 import useProfileContext from '../../hooks/useProfileContext';
+import { Plus } from 'lucide-react';
+
 
 function MessageBoxComponent() {
   const [typedMessage, typingEvent] = useState("");
@@ -31,16 +33,19 @@ function MessageBoxComponent() {
   };
 
   return (
-    <div className=" bg-secondary ">
+    <div className=" glassmorphism mr-7 ml-7 rounded-lg mb-5">
       <form className="shadow-lg flex justify-between" onSubmit={submitMessage}>
+        <button className='bg-[#6a6b71b5] m-3 mr-1 rounded-lg h-9 w-9 flex justify-center items-center'>
+          <Plus className='text-white' />
+        </button>
         <input
           type="text"
           onChange={(event) => typingEvent(event.target.value)}
           value={typedMessage}
           placeholder="Type your message /"
-          className="flex-grow m-3 pt-0 pl-2 pr-2 bg-slate-500 rounded-sm text-slate-300 shadow-slate-200 shadow-sm focus:outline-none"
+          className="flex-grow m-3 ml-1 pt-0 pl-2 pr-2 bg-[#6a6b71b5] rounded-lg text-slate-100 focus:outline-none"
         />
-        <button className="bg-primary p-4">SEND</button>
+        <button className="bg-[#6a6b71b5] text-slate-100 rounded-tr-lg rounded-br-lg p-4">SEND</button>
       </form>
     </div>
   );
