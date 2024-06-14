@@ -4,32 +4,27 @@
 import {Chat, IChatService} from "../contract.ts";
 import EventBus from '../bus/eventbus.ts'
 
-let id = 0;
-const messageList: Chat[] = [
-  {
-    id: String(++id),
-    username: "Ali",
-    message: "Hello There",
-    createdAt: new Date(),
-  },
-];
+let ID = 0;
+const messageList: Chat[] = [];
 
 export const chatService: IChatService = {
   async addMessage(options) {
     const newChat: Chat = {
-      id: String(++id),
+      ID: String(++ID),
       username: options.username,
       message: options.message,
+      roomName: options.roomName,
       createdAt: new Date(),
     };
 
     messageList.push(newChat);
 
-    EventBus.send({
+    EventBus.notify({
       type: 'newChat',
       date: new Date(),
       payload: {
-        chatId: newChat.id
+        chatID: newChat.ID,
+        roomName: newChat.roomName
       }
     })
 
@@ -43,10 +38,10 @@ export const chatService: IChatService = {
     return sortedList.slice(options.skip, options.take);
   },
 
-  async getById(options){
+  async getByID(options){
     for (let i = 0; i < messageList.length; i++) {
       const message = messageList[i];
-      if (message.id === options.id)
+      if (message.ID === options.ID)
       return message;
     }
   }

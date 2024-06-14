@@ -1,81 +1,160 @@
-import EventBus from '../bus/eventbus.ts';
+//>
+//> Imports
+//>
+
+//> Services
 import { chatService } from '../services/chatservice.ts';
-import { Disposable } from '../contract.ts'
+import { roomService } from '../services/roomservice.ts';
+
+//> Bus
+import EventBus from '../bus/eventbus.ts';
 import console from 'node:console';
 
-export default function startWebSocket(port: number) {
+//> Type
+import { Disposable, EvntBusAction } from '../contract.ts'
+import { Response } from "https://deno.land/x/oak@14.2.0/response.ts";
+
+let port = 0;
+
+function handler(req: Request) {
+  //? Connected Users Array
   const connectedUsers: string[] = [];
   console.log(`Server: WebSocket Running... [${port}]`);
 
-  Deno.serve((req) => {
+  //? Connected User
+  const connectedUser = new URL(req.url).searchParams.get("username");
 
-    const connectedUser = new URL(req.url).searchParams.get("username");
+  //? Socket Handler
+  let SocketHandler: Disposable | null = null
 
-    // Websocket not avialable
-    if (req.headers.get("upgrade") != "websocket") {
-      return new Response(null, { status: 501 });
+  //! Websocket not available
+  if (req.headers.get("upgrade") !== "websocket") {
+    //=> Return 501 Not Implemented
+    return new Response("WebSocket Not Implemented", { status: 501 });
+  }
+
+  //! User not defined
+  if (!connectedUser) {
+    //=> Return 400 Bad Request
+    return new Response("Username Missing", { status: 400 });
+  }
+
+  //! Username already exists
+  if(connectedUsers.includes(connectedUser)) {
+    return new Response("Username Already Exists", { status: 400 });
+  }
+
+  //? Socket & Response
+  const { socket, response } = Deno.upgradeWebSocket(req); //# Upgrade request to WebSocket
+
+  //# Add User to Connected the list
+  connectedUsers.push(connectedUser);
+
+  //# Send User Connected
+  const sendUserConnected = () => {
+
+    //<< Get Rooms
+    const rooms = roomService.getRooms().map((room) => room.name);
+
+    //# Create General Room if it doesn't exist
+    if(!rooms.includes("general")){
+      roomService.createRoom("general");
     }
+    const joinRoom: EvntBusAction = {
+      type: "userJoinedRoom",
+      payload: {
+        roomName: "general",
+        username: connectedUser,
+      }};
 
-    // User not defined
-    if (!connectedUser) {
-      return new Response(null, { status: 400 });
-    }
+    const connectAction: EvntBusAction = {
+      type: "userConnected",
+      payload: {
+        username: connectedUser,
+      }};
 
-    // Upgrade request to WebSocket
-    if(connectedUsers.includes(connectedUser)) {
-      return new Response(null, { status: 400 })
-    }
+    EventBus.notify(joinRoom); //=> Notify the EventBus new user joined general
+    EventBus.notify(connectAction); //=> Notify the EventBus new user connected
+  };
 
-    const { socket, response } = Deno.upgradeWebSocket(req);
-    let disposable: Disposable | null = null
+  //* Wait 10ms before caling sendUserConnected
+  const submitTimeout = setTimeout(sendUserConnected, 10);
 
-    connectedUsers.push(connectedUser);
+  //@
+  //@ Listeners
+  //@
 
-    const sendUserConnected = () => {
-      EventBus.send({
-        type: "userConnected",
-        payload: {
-          username: connectedUser,
-        },
-      });
-    };
+  //@ On Message
+  socket.addEventListener("open", async () => {
+    console.log(`Connection to ${connectedUser}`);
 
-    const timeoutID = setTimeout(sendUserConnected, 20);
+    SocketHandler = await EventBus.subscribe(
+      {},
+      async (message) => {
+        console.log(message)
 
-    socket.addEventListener("open", async () => {
-      console.log(`Connection to ${connectedUser} started`);
+        if (message.type === "userJoinedRoom") {
+          const instructions = {
+            action: "userJoinedRoom",
+            payload: {
+              roomName: message.payload.roomName,
+              username: message.payload.username
+            }};
+          socket.send(JSON.stringify(instructions)); //=>
+        }
 
-      disposable = await EventBus.subscribe(
-        {},
-        async (message) => {
-          console.log({ message })
-          if (message.type === "newChat") {
-            const newChat = await chatService.getById({ id: message.payload.chatId });
-            const instructions = { action: "newChat", payload: newChat };
-            socket.send(JSON.stringify(instructions));
-          }
+        if (message.type === "userConnected") {
+          const instructions = { info: "userConnected", payload: message.payload.username };
+          socket.send(JSON.stringify(instructions)); //=>
+        }
 
-          if (message.type === "userConnected") {
-            const instructions = { info: "userConnected", payload: message.payload.username };
-            socket.send(JSON.stringify(instructions));
-          }
+        if (message.type === "userDisconnected") {
+          const instructions = { info: "userDisconnected", payload: connectedUser };
+          socket.send(JSON.stringify(instructions)); //=>
+        }
 
-          if (message.type === "userDisconnected") {
-            const instructions = { info: "userDisconnected", payload: connectedUser };
-            socket.send(JSON.stringify(instructions));
+        if (message.type === "newChat") {
+          const fetchedChat = await chatService.getByID({ ID: message.payload.chatID });
+
+          if (fetchedChat) {
+
+            const roomID = roomService.getRoomIDByName(fetchedChat.roomName)
+            const newChat = {
+              ID: fetchedChat.ID,
+              username: fetchedChat.username,
+              message: fetchedChat.message,
+              targetRoom: roomID,
+              createdAt: fetchedChat.createdAt,
+            }
+            const instructions = {
+              action: "newChat",
+              payload: {
+                newChat,
+              }};
+            socket.send(JSON.stringify(instructions)); //=>
           }
         }
-      );
-    });
-
-    socket.addEventListener("close", () => {
-      clearTimeout(timeoutID); // clear the timeout when the socket closes
-      connectedUsers.splice(connectedUsers.indexOf(connectedUser), 1);
-      disposable?.dispose()
-
-      console.log(`Connection to ${connectedUser} closed.`);
-    });
-
-    return response;
+      }
+    );
   });
+
+  //@ On Close
+  socket.addEventListener("close", () => {
+    clearTimeout(submitTimeout); //* clear the timeout when the socket closes
+
+    //# Notify User Disconnected
+    connectedUsers.splice(connectedUsers.indexOf(connectedUser), 1);
+
+    //# Dispose Socket Handler
+    SocketHandler?.dispose()
+
+    console.log(`Connection to ${connectedUser} closed.`);
+  });
+
+  return response;
+}
+
+export default function startWebSocket(portArg: number) {
+  port = portArg;
+  Deno.serve(handler, { port });
 }

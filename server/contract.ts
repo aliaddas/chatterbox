@@ -4,121 +4,151 @@
  * No auth, no transport (http, websocket ...).
  * Purely logic.
  */
-export interface IChatService {
 
-	/**
-	 * Adds a new message to the chat
-	 */
+//@
+//@ Chat Service Interface
+//@
+export interface IChatService {
+	//* Add a new message to the chat
 	addMessage(options: AddChatDTO): Promise<Chat>
 
-	/**
-	 * Get a list of messages from the chat
-	 * @param options Fetching options
-	 */
+	//* Get all messages of a chat with
 	getMessages(options: GetChatsDTO): Promise<Chat[]>
 
-	getById(options: GetChatByIdDTO): Promise<Chat | undefined>
-
+	//* Get a chat by its ID
+	getByID(options: GetChatByIdDTO): Promise<Chat | undefined>
 }
 
-/**
- * EventBus
- */
+//@
+//@ Event Bus Interface
+//@
 export interface IEventBus {
+	//* Send a new message through the message bus to be
+	//* handled by some third party
+	notify(newMessage: EvntBusAction): Promise<void>
 
-	/**
-	 * Send a new message through the message bus to be
-	 * handled by some third party
-	 */
-	send(newMessage: EvntBusAction): Promise<void>
-
-	/**
-	 * Subscribe to incoming messages to be able to handle them
-	 */
+	//*Subscribe to incoming messages to be able to handle them
 	subscribe(options: SubscriptionOptions, handler: ChatBusMsgHandler): Promise<Disposable>
-
 }
 
-export type EvntBusAction = NewChatMsg | UserConnectedMsg | UserDisconnectedMsg
+//>
+//> Exports
+//>
 
-/**
- * Representation a single message
- */
+//>
+//> Room Type
+export type Room = {
+  ID: string
+  name: string
+}
+
+//>
+//> Chat Type
 export type Chat = {
-	id: string
+	ID: string
 	username: string
 	message: string
+	roomName: string
 	createdAt: Date
 }
 
-/**
- * Payload (or Data Transfer Object) for adding a new
- * message to the chat
- */
+//>
+//> DTOs
+//>
+
+//>
+//> Add Chat DTO
 export type AddChatDTO = {
 	username: string
 	message: string
+	roomName: string
 }
 
-/**
- * DTO for fetching messages from  the service
- */
+//>
+//> Get Chats DTO
 export type GetChatsDTO = {
+	//* Order of the messages
 	order?: 'desc' | 'asc'
 
-	/**
-	 * Number of messages to fetch
-	 */
+	//* Number of messages to take
 	take: number
 
-	/**
-	 * Number of messages to skip before selecting
-	 */
+	//* Number of messages to skip
 	skip: number
 
 }
 
+//>
+//> Get Chat By ID DTO
 export type GetChatByIdDTO = {
-	id: string;
+	ID: string;
 }
 
-/**
- * Object that can be disposed: useful to stop
- * event listeners that are not needed anymore
- */
+//>
+//> Interfaces
+//>
+
+//>
+//> Disposable
 export interface Disposable {
+	//* Dispose the user
 	dispose(): void
 }
+export type ChatBusMsgHandler = (incomingMessage: EvntBusAction) => unknown
 
-/**
- * Event message representing a new chat
- */
+
+//>
+//> Event Bus Actions
+//>
+
+//>
+//> New Chat Message
 export type NewChatMsg = {
 	type: 'newChat',
-
 	payload: {
-		chatId: string
+		chatID: string
+		roomName: string
 	}
-
 	date: Date
 }
 
+//>
+//> User Connected Notification
 export type UserConnectedMsg = {
 	type: 'userConnected'
-
 	payload: {
 		username: string
 	}
 }
 
+//>
+//> User Connected Notification
+export type UserJoinRoomNotification = {
+	type: 'userJoinedRoom'
+	payload: {
+		roomName: string
+		username: string
+	}
+}
+
+//>
+//> User Disconnected Notification
 export type UserDisconnectedMsg = {
 	type: 'userDisconnected'
-
 	payload: {
 		username: string
 	}
 }
 
-export type SubscriptionOptions = {}
+//>
+//> Event Bus Actions Union
+export type EvntBusAction =
+			NewChatMsg
+			|
+			UserJoinRoomNotification
+			|
+			UserConnectedMsg
+			|
+			UserDisconnectedMsg
 
-export type ChatBusMsgHandler = (incomingMessage: EvntBusAction) => unknown
+export type SubscriptionOptions = {}

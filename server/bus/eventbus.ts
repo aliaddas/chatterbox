@@ -1,10 +1,16 @@
-import { ChatBusMsgHandler, IEventBus, SubscriptionOptions, Disposable, EvntBusAction } from "../contract.ts";
+import {
+  IEventBus,
+  EvntBusAction,
+  Disposable,
+  ChatBusMsgHandler,
+  SubscriptionOptions
+} from "../contract.ts";
 
 
 class EvntBus implements IEventBus {
   private subscribedList: Subscriber[] = [];
 
-  send(newMessage: EvntBusAction): Promise<void> {
+  notify(newMessage: EvntBusAction): Promise<void> {
     this.subscribedList.forEach(subscriber => {
       subscriber.handler(newMessage)
     })

@@ -1,11 +1,13 @@
 import { useState } from "react";
-import useProfileContext from '../../hooks/useProfileContext';
+import useProfileContext from '../../hooks/useUserContext';
 import { Plus } from 'lucide-react';
 
 
 function MessageBoxComponent() {
   const [typedMessage, typingEvent] = useState("");
   const { username } = useProfileContext();
+  const { roomName } = useProfileContext();
+
 
   const submitMessage = (evnt: React.FormEvent) => {
     evnt.preventDefault();
@@ -14,18 +16,22 @@ function MessageBoxComponent() {
     const message = {
       username: username,
       message: typedMessage,
+      roomName: roomName,
     };
 
     // TODO: ADD Message by HTTPPost
     //Send the message with instructions
-    fetch("http://localhost:7000/addMessage", {
+    fetch(`http://localhost:7000/addMessage?roomName=${roomName}`,
+    {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(message),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        response.json()
+      })
       .catch((error) => {
         console.error("Error adding dummy message:", error);
       });

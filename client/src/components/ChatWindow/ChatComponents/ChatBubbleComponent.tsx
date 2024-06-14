@@ -1,4 +1,4 @@
-import useProfileContext from '../../../hooks/useProfileContext';
+import useProfileContext from '../../../hooks/useUserContext';
 import "./css/ChatBubbleComponent.css";
 
 

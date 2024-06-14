@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import useProfileContext from '../../hooks/useProfileContext';
+import useProfileContext from '../../hooks/useUserContext';
 import WebSocketContext from '../../context/WebSocketContext';
 
 

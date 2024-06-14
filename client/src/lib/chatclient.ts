@@ -7,4 +7,5 @@ export interface IChatClient {
 type ChatMessage = {
   username: string;
   message: string;
+  roomName: string;
 };

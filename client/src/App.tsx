@@ -1,15 +1,18 @@
 // App.tsx
-import React, { useContext, useEffect, useState } from "react";
 import "./App.css";
+import { useEffect, useState } from "react";
 import ChatWindow from "./components/ChatWindow";
 import SideBarMenu from "./components/ChatWindow/SideBarMenu";
-import ProfileContext from "./context/ProfileContext";
+import UserContext from "./context/UserContext";
 import LoginWindow from "./components/AuthWindow/LoginWindow";
 import WebSocketContext from "./context/WebSocketContext";
+import { Room } from "../../server/contract";
 
 function App() {
   const [username, setUsername] = useState("");
+  const [roomName, setRoomName] = useState("");
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
 
   // Check every 5 seconds if the WebSocket is still open
   useEffect(() => {
@@ -33,7 +36,7 @@ function App() {
       removeEventListener: () => {},
       onOpen: () => {}, onError: () => {}, onClose: (callback: (event: CloseEvent) => void) => {} }}
     >
-      <ProfileContext.Provider value={{ username, setUsername }}>
+      <UserContext.Provider value={{ username, setUsername, roomName, setRoomName, rooms, setRooms }}>
         <div className="flex h-screen w-screen bg-[rgb(12,5,16)]">
           {username === "" || webSocket === null ? (
             <LoginWindow />
@@ -44,7 +47,7 @@ function App() {
             </>
           )}
         </div>
-      </ProfileContext.Provider>
+      </UserContext.Provider>
     </WebSocketContext.Provider>
   );
 }

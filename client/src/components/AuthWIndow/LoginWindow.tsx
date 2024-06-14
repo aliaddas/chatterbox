@@ -1,11 +1,11 @@
 // LoginWindow.tsx
-import React, { useContext, useEffect, useState } from "react";
-import useProfileContext from '../../hooks/useProfileContext';
+import React, { useContext, useState } from "react";
+import useUserContext from '../../hooks/useUserContext';
 import WebSocketContext from '../../context/WebSocketContext';
 
 function LoginWindow() {
   const [inputUsername, setInputUsername] = useState("");
-  const { submitUsername } = useProfileContext();
+  const { submitUsername } = useUserContext();
   const { webSocket, setWebSocket } = useContext(WebSocketContext);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -40,17 +40,17 @@ function LoginWindow() {
   return (
     <div className="flex flex-col h-screen w-screen justify-center items-center bg-[rgb(12,5,16)]">
       <div className="bg-white p-8 rounded-md shadow-md">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='space-x-10'>
           <input
             type="text"
             value={inputUsername}
             onChange={(event) => setInputUsername(event.target.value)}
             placeholder="Enter username"
-            className="border border-gray-300 rounded-md p-2 mb-2"
+            className="border border-gray-300 rounded-md p-2"
           />
           <button
             type="submit"
-            className="bg-slate-500 text-white rounded-md px-4 py-2"
+            className="bg-purple-950 text-white rounded-md px-4 py-2"
           >
             Submit
           </button>
