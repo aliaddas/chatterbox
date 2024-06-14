@@ -4,10 +4,8 @@
 
 //> Services
 import {chatService} from "../../services/chatservice.ts";
-import {roomService} from "../../services/roomservice.ts";
 
 import {z} from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import console from "node:console";
 import {Router, RouterContext} from "https://deno.land/x/oak@14.2.0/mod.ts";
 
 //> Routes
@@ -22,7 +20,7 @@ const QueryValidator = z.object({
 const MessageValidator = z.object({
   username: z.string().min(1, {message: "Username Required"}),
   message: z.string().min(1, {message: "Message Required"}),
-  roomName: z.string().min(1, {message: "Room Name Required"}),
+  roomID: z.string().min(1, {message: "Room ID Required"}),
 });
 
 //* Route Handlers
@@ -72,16 +70,6 @@ async function handleAddMessage(context: RouterContext<any, Record<string, any>>
   //? Request & Response
   const {response, request} = context;
 
-  //? Get roomID from URL
-  const roomName = request.url.searchParams.get("roomName");
-
-  //! Handle null case
-  if (roomName === null) {
-    response.status = 422;
-    response.body = "Room ID is missing";
-    return;
-  }
-
   //? Get Request Body
   const rawMessageJSON = await request.body
     .json()
@@ -91,7 +79,7 @@ async function handleAddMessage(context: RouterContext<any, Record<string, any>>
     response.body = rawMessageJSON.message;
     return;
   }
-  console.log(`New message for Room: ${roomName}`);
+  console.log(`New message for Room: ${rawMessageJSON.roomID}`);
 
   //* Parse & Validate Message
   const parsedMessageJSON = MessageValidator.safeParse(rawMessageJSON);

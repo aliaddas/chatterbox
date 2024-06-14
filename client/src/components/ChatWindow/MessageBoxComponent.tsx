@@ -1,12 +1,13 @@
 import { useState } from "react";
 import useProfileContext from '../../hooks/useUserContext';
 import { Plus } from 'lucide-react';
+import useRoomsContext from '../../hooks/useRoomsContext';
 
 
 function MessageBoxComponent() {
   const [typedMessage, typingEvent] = useState("");
   const { username } = useProfileContext();
-  const { roomName } = useProfileContext();
+  const { selectedRoom } = useRoomsContext();
 
 
   const submitMessage = (evnt: React.FormEvent) => {
@@ -16,12 +17,12 @@ function MessageBoxComponent() {
     const message = {
       username: username,
       message: typedMessage,
-      roomName: roomName,
+      roomID: selectedRoom?.ID,
     };
 
     // TODO: ADD Message by HTTPPost
     //Send the message with instructions
-    fetch(`http://localhost:7000/addMessage?roomName=${roomName}`,
+    fetch(`http://localhost:7000/addMessage`,
     {
       method: "POST",
       headers: {

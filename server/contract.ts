@@ -17,6 +17,10 @@ export interface IChatService {
 
 	//* Get a chat by its ID
 	getByID(options: GetChatByIdDTO): Promise<Chat | undefined>
+
+	createRoom(name: string): Promise<Room>
+
+	getRooms(): Promise<Room[]>
 }
 
 //@
@@ -48,7 +52,7 @@ export type Chat = {
 	ID: string
 	username: string
 	message: string
-	roomName: string
+	roomID: string
 	createdAt: Date
 }
 
@@ -61,7 +65,7 @@ export type Chat = {
 export type AddChatDTO = {
 	username: string
 	message: string
-	roomName: string
+	roomID: string // TODO: Make into a roomId
 }
 
 //>
@@ -106,8 +110,7 @@ export type ChatBusMsgHandler = (incomingMessage: EvntBusAction) => unknown
 export type NewChatMsg = {
 	type: 'newChat',
 	payload: {
-		chatID: string
-		roomName: string
+		chat: Chat
 	}
 	date: Date
 }
@@ -126,7 +129,7 @@ export type UserConnectedMsg = {
 export type UserJoinRoomNotification = {
 	type: 'userJoinedRoom'
 	payload: {
-		roomName: string
+		roomID: string
 		username: string
 	}
 }
@@ -140,6 +143,11 @@ export type UserDisconnectedMsg = {
 	}
 }
 
+type RoomCreatedMsg = {
+	type: 'roomCreatedMsg',
+	payload: {}
+}
+
 //>
 //> Event Bus Actions Union
 export type EvntBusAction =
@@ -150,5 +158,7 @@ export type EvntBusAction =
 			UserConnectedMsg
 			|
 			UserDisconnectedMsg
+			|
+			RoomCreatedMsg
 
 export type SubscriptionOptions = {}

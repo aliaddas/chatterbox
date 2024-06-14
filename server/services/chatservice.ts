@@ -3,9 +3,14 @@
 
 import {Chat, IChatService} from "../contract.ts";
 import EventBus from '../bus/eventbus.ts'
+import { Room } from "../contract.ts";
+import { v4 as uuidv4 } from '../node_modules/uuid/wrapper.mjs';
 
 let ID = 0;
 const messageList: Chat[] = [];
+const roomList: Room[] = [
+  { ID: 'general', name: 'General' },
+];
 
 export const chatService: IChatService = {
   async addMessage(options) {
@@ -13,7 +18,7 @@ export const chatService: IChatService = {
       ID: String(++ID),
       username: options.username,
       message: options.message,
-      roomName: options.roomName,
+      roomID: options.roomID,
       createdAt: new Date(),
     };
 
@@ -23,8 +28,7 @@ export const chatService: IChatService = {
       type: 'newChat',
       date: new Date(),
       payload: {
-        chatID: newChat.ID,
-        roomName: newChat.roomName
+        chat: newChat
       }
     })
 
@@ -44,7 +48,21 @@ export const chatService: IChatService = {
       if (message.ID === options.ID)
       return message;
     }
-  }
+  },
+
+  async createRoom(name: string){
+    const room:Room = {
+      ID: uuidv4(),
+      name
+    };
+    roomList.push(room);
+    return room;
+  },
+
+  async getRooms(){
+    return roomList;
+  },
+
 };
 
 // --

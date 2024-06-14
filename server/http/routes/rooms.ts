@@ -3,7 +3,7 @@
 //>
 
 //> Services
-import {roomService} from "../../services/roomservice.ts";
+import {chatService} from "../../services/chatservice.ts";
 
 import {z} from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import {Router, RouterContext} from "https://deno.land/x/oak@14.2.0/mod.ts";
@@ -13,7 +13,7 @@ const roomRouter = new Router();
 
 //> Zod Room Validator
 const RoomValidator = z.object({
-  name: z.string(),
+  roomName: z.string(),
 });
 
 roomRouter
@@ -26,13 +26,14 @@ roomRouter
 //#
 
 //# Get Handler
-function handleGetRooms(context: RouterContext<any, Record<string, any>>) {
+async function handleGetRooms(context: RouterContext<any, Record<string, any>>) {
   console.log("Get Rooms Handler");
   //? Response
   const { response } = context;
 
   //<< Get Rooms
-  const rooms = roomService.getRooms();
+  const rooms = await chatService.getRooms();
+  console.log('rooms', rooms);
 
   //=> Send Response to Client
   response.body = rooms;
@@ -44,12 +45,13 @@ async function handleCreateRoom(context: RouterContext<any, Record<string, any>>
   const { request, response } = context;
 
   //? Get Request Body
-  const rawRoomJSON = await request.body
+  const body = await request.body
   .json()
   .catch(() => new Error("Room is not in JSON format"));
 
-  //* Parse & Validate
-  const parsedRoomJSON = await RoomValidator.safeParseAsync(await rawRoomJSON.json);
+  console.log(body);
+  // //* Parse & Validate
+  const parsedRoomJSON = await RoomValidator.safeParseAsync(body);
 
   //! Parsing Failed
   if (!parsedRoomJSON.success) {
@@ -60,10 +62,10 @@ async function handleCreateRoom(context: RouterContext<any, Record<string, any>>
   }
 
   //? Extract Room Name
-  const { name } = parsedRoomJSON.data;
+  const { roomName } = parsedRoomJSON.data;
 
   //# Create Room
-  const newRoom = roomService.createRoom(name);
+  const newRoom = await chatService.createRoom(roomName);
 
   //=> Send Response to Client
   response.body = newRoom;

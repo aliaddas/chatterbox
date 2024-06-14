@@ -18,6 +18,13 @@ class EvntBus implements IEventBus {
     return Promise.resolve()
   }
 
+  action<T extends EvntBusAction["type"], Payload = Extract<EvntBusAction, { type: T }>["payload"]>(type: T, payload: Payload): EvntBusAction {
+    return {
+      type,
+      payload
+    } as { type: T, payload: Payload }
+  }
+
   async subscribe(options: SubscriptionOptions, handler: ChatBusMsgHandler): Promise<Disposable> {
     const subscriber = {
       options,

@@ -10,18 +10,6 @@ export default function useUserContext() {
     username: ctx.username,
     submitUsername: (username: string) => {
       ctx.setUsername(username)
-    },
-
-    //? Room ID
-    roomName: ctx.roomName,
-    setRoomName: (roomName: string) => {
-      ctx.setRoomName(roomName)
-    },
-
-    //? Rooms
-    rooms: ctx.rooms,
-    setRooms: (rooms: Room[]) => {
-      ctx.setRooms(rooms)
     }
   }
 }

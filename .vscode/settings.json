@@ -5,5 +5,88 @@
   "deno.enable": true,
   "deno.enablePaths": [
     "server"
-  ]
+  ],
+  "better-comments.tags": [
+    {
+      "tag": "#",
+      "color": "#D43F53",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "?",
+      "color": "#3498DB",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "rgba(0, 0, 250, 0.05)",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "//",
+      "color": "#474747",
+      "strikethrough": true,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "!",
+      "color": "#D4503F",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "*",
+      "color": "#72d47c",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "@",
+      "color": "#B3CD2D",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": ">",
+      "color": "#E3B6FF",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": true
+    },
+    {
+      "tag": "<<",
+      "color": "#FF58B1",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "rgba(250, 250, 250, 0.05)",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "=>",
+      "color": "#FF5887",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "rgba(250, 250, 250, 0.05)",
+      "bold": false,
+      "italic": false
+    },
+  ],
 }
